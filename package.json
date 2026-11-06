@@ -13,7 +13,9 @@
     "ledger": "tsx ledger/build.mts",
     "e2e": "tsx scenarios/e2e-mcp.mts",
     "demo-bytes": "tsx demo/make-bytes.mts",
-    "write-outcomes": "tsx scenarios/write-outcomes.mts"
+    "write-outcomes": "tsx scenarios/write-outcomes.mts",
+    "bench-llm": "tsx bench/llm.mts",
+    "dsl-check": "tsx scenarios/dsl-check.mts"
   },
   "keywords": [],
   "author": "",
