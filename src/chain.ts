@@ -1,4 +1,5 @@
 import { SuiGrpcClient } from "@mysten/sui/grpc";
+import type { Transaction } from "@mysten/sui/transactions";
 import { GrpcTransport } from "@protobuf-ts/grpc-transport";
 import { ChannelCredentials } from "@grpc/grpc-js";
 import { factsFromError, type FailureFacts, type RawExecutionError } from "./signature.js";
@@ -15,7 +16,9 @@ class Pacer {
   }
 }
 
-function makeClient(host: string, network: any, apiKey?: string) {
+function makeClient(rawHost: string, network: any, apiKey?: string) {
+  let host = rawHost.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+  if (!host.includes(":")) host += ":443";
   const transport = new GrpcTransport({
     host,
     channelCredentials: ChannelCredentials.createSsl(),
@@ -49,14 +52,14 @@ export class Chain {
     const client = this.tatum ?? this.fullnode;
     const res: any = await client.core.getTransaction({ digest });
     const tx = res.Transaction ?? res.FailedTransaction;
-    const err = tx?.effects?.status?.error as RawExecutionError | undefined;
+    const err = (tx?.status?.error ?? tx?.effects?.status?.error) as RawExecutionError | undefined;
     const facts = err ? factsFromError(err) : null;
     this.cache.set(digest, facts);
     return facts;
   }
 
   /** Simulate unsigned tx bytes. Tries Tatum first, falls back to the public fullnode. */
-  async simulate(txBytes: Uint8Array): Promise<SimResult> {
+  async simulate(txBytes: Uint8Array | Transaction, opts: { checksEnabled?: boolean } = {}): Promise<SimResult> {
     const attempts: Array<["tatum" | "fullnode", SuiGrpcClient | undefined]> = [
       ["tatum", this.tatum],
       ["fullnode", this.fullnode],
@@ -66,12 +69,17 @@ export class Chain {
       if (!client) continue;
       try {
         if (via === "tatum") await this.pacer.wait();
-        const res: any = await client.core.simulateTransaction({ transaction: txBytes });
+        const res: any = await client.core.simulateTransaction({ transaction: txBytes as any, ...opts });
         const tx = res.Transaction ?? res.FailedTransaction;
-        const err = tx?.effects?.status?.error as RawExecutionError | undefined;
-        const ok = res.$kind === "Transaction" && tx?.effects?.status?.success !== false && !err;
+        const err = (tx?.status?.error ?? tx?.effects?.status?.error) as RawExecutionError | undefined;
+        const ok = res.$kind === "Transaction" && !err;
         return { passed: ok, facts: err ? factsFromError(err) : undefined, via };
-      } catch (e) {
+      } catch (e: any) {
+        // Pre-execution rejections (bad gas budget, missing package/object) arrive as thrown errors.
+        const msg = String(e?.message ?? e);
+        if (/gas budget|not found/i.test(msg)) {
+          return { passed: false, facts: factsFromError({ message: msg }), via };
+        }
         lastErr = e;
       }
     }

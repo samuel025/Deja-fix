@@ -28,8 +28,12 @@ export function factsFromError(err: RawExecutionError): FailureFacts {
   const msg = err.message ?? "";
   let kind = err.$kind ?? "Other";
   if (!err.$kind || kind === "Unknown") {
-    if (/gas/i.test(msg)) kind = "InsufficientGas";
+    // The chain reports many errors only in the message, e.g. "InsufficientCoinBalance in command 1".
+    const named = msg.match(/^([A-Z][A-Za-z]+)(?: in command|\b)/);
+    if (/gas budget/i.test(msg)) kind = "InsufficientGas";
     else if (/version/i.test(msg)) kind = "ObjectVersion";
+    else if (/not found/i.test(msg) && /object|package/i.test(msg)) kind = "PackageOrObjectNotFound";
+    else if (named) kind = named[1];
   }
   return {
     kind,

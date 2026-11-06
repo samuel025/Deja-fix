@@ -5,7 +5,8 @@
   "scripts": {
     "test": "vitest run",
     "start": "tsx src/server.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "scenarios": "tsx scenarios/run.mts"
   },
   "keywords": [],
   "author": "",
