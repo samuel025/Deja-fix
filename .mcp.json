@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "deja-fix": {
+      "type": "stdio",
+      "command": "/home/samuel/Documents/tatrum_hack/bin/deja-fix-mcp.sh",
+      "args": [],
+      "env": {}
+    }
+  }
+}

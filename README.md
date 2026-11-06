@@ -24,7 +24,7 @@ cp .env.example .env   # fill in Tatum + Walrus Memory values
 
 Run the server (stdio): `set -a; source .env; set +a; npm start`
 
-Add to Claude Code: `claude mcp add deja-fix -- npx tsx /path/to/src/server.ts` (pass the env vars with `-e`).
+Add to Claude Code (no secrets in config; the launcher loads `.env`): `claude mcp add -s project deja-fix -- "$PWD/bin/deja-fix-mcp.sh"`, then run `claude` and approve the project server.
 
 ## Do X, see Y
 
@@ -34,6 +34,7 @@ Add to Claude Code: `claude mcp add deja-fix -- npx tsx /path/to/src/server.ts` 
 | `npm test` | Gate and signature unit tests pass |
 | `npm run bench` | Memory vs no-memory table in `results/benchmark.md` (mock memory, no Walrus writes) |
 | `npm run recall-check` | Read-only: 10/10 stored fixes recalled from Walrus |
+| `npm run e2e` | Full flow over real MCP stdio with mock memory: diagnose, verify, refuse bad/fake IDs, remember, recall |
 | `npm run ledger` | Rebuilds `ledger/index.html` from results |
 
 Real Walrus writes: `CONFIRM_REAL_WRITE=1 npm run write-all` (idempotent, stops on first error).
