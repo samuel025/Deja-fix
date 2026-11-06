@@ -1,0 +1,687 @@
+{
+  "meta": {
+    "completedRuns": 30,
+    "when": "2026-11-06T15:58:38.636Z",
+    "model": "gemini-3.1-flash-lite",
+    "reps": 3,
+    "scenarios": 10,
+    "maxAttempts": 3,
+    "llmCalls": 156,
+    "memory": "mock (in-memory)",
+    "note": "first occurrence is shared; both arms then see the repeat in a fresh session"
+  },
+  "summary": {
+    "amnesiac": {
+      "firstTryRate": 0.6,
+      "avgAttempts": 1.7,
+      "unsolved": 9
+    },
+    "dejafix": {
+      "firstTryRate": 0.6666666666666666,
+      "avgAttempts": 1.5333333333333334,
+      "unsolved": 5
+    }
+  },
+  "rows": [
+    {
+      "rep": 0,
+      "scenario": "abort-option-destroy-none",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "abort-vector-borrow-oob",
+      "first": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "abort-balance-split",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "abort-utf8-invalid",
+      "first": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "type-argument-not-found",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "insufficient-coin-balance",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "function-not-found",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "wrong-argument-type",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "gas-budget-too-low",
+      "first": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 0,
+      "scenario": "package-not-found",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "abort-option-destroy-none",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "abort-vector-borrow-oob",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "abort-balance-split",
+      "first": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "abort-utf8-invalid",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "type-argument-not-found",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "insufficient-coin-balance",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "function-not-found",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "wrong-argument-type",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "gas-budget-too-low",
+      "first": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 1,
+      "scenario": "package-not-found",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "abort-option-destroy-none",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "abort-vector-borrow-oob",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "abort-balance-split",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "abort-utf8-invalid",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "type-argument-not-found",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "insufficient-coin-balance",
+      "first": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 1,
+        "firstTry": true,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "function-not-found",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "wrong-argument-type",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "gas-budget-too-low",
+      "first": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": true
+      }
+    },
+    {
+      "rep": 2,
+      "scenario": "package-not-found",
+      "first": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": true,
+        "recalled": false
+      },
+      "amnesiac": {
+        "attempts": 3,
+        "firstTry": false,
+        "passed": false,
+        "recalled": false
+      },
+      "dejafix": {
+        "attempts": 2,
+        "firstTry": false,
+        "passed": true,
+        "recalled": true
+      }
+    }
+  ]
+}
