@@ -2,6 +2,8 @@
 
 An MCP server that lets coding agents diagnose failed Sui transactions and remember **only fixes the chain confirmed**. Built for the Tatum × Walrus "Total Recall" hackathon.
 
+**Live site: https://deja-fix1.vercel.app/** (interactive replay, the verification gate, the Walrus ledger and benchmark results, all recorded from real runs).
+
 Reads and simulations go through Tatum's Sui gRPC. Memory is Walrus Memory. A fix is stored only if the server itself simulated it and saw it pass.
 
 ## Tools
