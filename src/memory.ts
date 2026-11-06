@@ -42,7 +42,7 @@ export class Memory {
   async recallFixes(signatureHash: string): Promise<StoredMemory[]> {
     const res = await this.m.recall({
       query: `dejafix:verified_fix:${signatureHash}`,
-      topK: 10,
+      topK: 50,
       maxDistance: 0.8,
     });
     const items: any[] = res?.results ?? res?.memories ?? res ?? [];
