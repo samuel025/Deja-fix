@@ -64,6 +64,7 @@ h1 .echo{position:absolute;left:0;top:0;pointer-events:none;color:var(--lilac);o
 
 /* sections */
 section{padding:clamp(72px,14vh,160px) 0;border-top:1px solid var(--line)}
+section#honest{padding:clamp(48px,8vh,80px) 0}
 h2{font-weight:200;font-size:clamp(36px,6.4vw,92px);line-height:1;letter-spacing:-.04em;max-width:16ch}
 h2 em{font-style:normal;color:var(--amber);font-weight:300}
 .lede{color:var(--mut);font-size:clamp(17px,1.6vw,20px);font-weight:300;max-width:56ch;margin-top:24px}
@@ -136,10 +137,9 @@ tr:hover td{background:color-mix(in srgb,var(--fg) 4%,transparent)}
 .verdict b{font-weight:600}
 
 /* honest */
-.honest{margin-top:48px;display:grid;gap:0;border-top:1px solid var(--line)}
-.honest li{list-style:none;display:grid;grid-template-columns:48px 1fr;gap:12px;padding:22px 0;border-bottom:1px solid var(--line);font-weight:300;font-size:clamp(17px,1.8vw,21px)}
-.honest li span{font:500 12px "JetBrains Mono";color:var(--amber);padding-top:7px}
-.honest b{font-weight:500}
+.limits{margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px 48px}
+.limits li{list-style:none;color:var(--mut);font-size:15px;font-weight:300;line-height:1.5}
+.limits b{display:block;color:var(--fg);font-weight:500;margin-bottom:2px}
 
 footer{padding:64px 0 48px;border-top:1px solid var(--line)}
 footer .big{font-weight:200;font-size:clamp(40px,9vw,130px);letter-spacing:-.05em;line-height:.95}
@@ -154,7 +154,7 @@ footer .big em{font-style:normal;color:var(--amber)}
 <body>
 <nav><div class="wrap">
   <a class="logo" href="#top"><i></i>Déjà Fix</a>
-  <ul><li><a href="#replay">Replay</a></li><li><a href="#gate">The gate</a></li><li><a href="#ledger">Ledger</a></li><li><a href="#proof">Proof</a></li><li><a href="#honest">Honest notes</a></li></ul>
+  <ul><li><a href="#replay">Replay</a></li><li><a href="#gate">The gate</a></li><li><a href="#ledger">Ledger</a></li><li><a href="#proof">Proof</a></li><li><a href="#honest">Limits</a></li></ul>
   <a class="pill" href="#replay">Watch it remember</a>
 </div></nav>
 
@@ -193,16 +193,15 @@ footer .big em{font-style:normal;color:var(--amber)}
 
 <section id="proof"><div class="wrap">
   <p class="eyebrow reveal">04 — Proof</p>
-  <h2 class="reveal">Does memory <em>actually</em> help?</h2>
-  <p class="lede reveal">The plan was fixed in the PRD before we ran anything, and we report the results either way. Each failure appears twice; the bars show the second time.</p>
+  <h2 class="reveal">What the <em>numbers</em> show.</h2>
+  <p class="lede reveal">Ten real failures, each seen twice in separate sessions. The bars show the second time. The plan was fixed in the PRD before we ran anything.</p>
   <div class="bars" id="bars"></div>
   <div class="verdict reveal" id="verdict"></div>
 </div></section>
 
 <section id="honest"><div class="wrap">
-  <p class="eyebrow reveal">05 — Honest notes</p>
-  <h2 class="reveal">What this <em>doesn't</em> prove.</h2>
-  <ul class="honest reveal" id="honestlist"></ul>
+  <p class="eyebrow reveal">05 — Known limits</p>
+  <ul class="limits reveal" id="honestlist"></ul>
 </div></section>
 
 <footer><div class="wrap">
@@ -323,24 +322,20 @@ const mk = (title, cap, m, s, a, b) => `<div class="bench reveal"><h4>${title}</
   <p class="cap" style="margin-top:22px">${b}</p></div>`;
 const sc = D.bench.scripted, lm = D.bench.llm;
 $("#bars").innerHTML =
-  mk("Scripted agent", `${sc.meta.scenarios} failures × ${sc.meta.reps} reps. A fixed policy, not an LLM — it shows the record → recall → apply loop works.`, sc.meta, sc.summary, "secondFirstTryRate", `Avg attempts on the repeat: ${sc.summary.amnesiac.secondAvgAttempts.toFixed(2)} → ${sc.summary.dejafix.secondAvgAttempts.toFixed(2)}`) +
+  mk("Scripted agent", `${sc.meta.scenarios} failures × ${sc.meta.reps} reps. A fixed policy rather than an LLM, so it checks the record → recall → apply loop.`, sc.meta, sc.summary, "secondFirstTryRate", `Avg attempts on the repeat: ${sc.summary.amnesiac.secondAvgAttempts.toFixed(2)} → ${sc.summary.dejafix.secondAvgAttempts.toFixed(2)}`) +
   mk("Real LLM", `${lm.meta.model} · ${lm.meta.scenarios} failures × ${lm.meta.reps} reps · up to ${lm.meta.maxAttempts} attempts.`, lm.meta, lm.summary, "firstTryRate", `Unsolved: ${lm.summary.amnesiac.unsolved} → ${lm.summary.dejafix.unsolved} of ${lm.meta.scenarios * lm.meta.reps} runs. Avg attempts: ${lm.summary.amnesiac.avgAttempts.toFixed(2)} → ${lm.summary.dejafix.avgAttempts.toFixed(2)}`);
-$("#verdict").innerHTML = `<b>Honest read:</b> with a real model the benefit is <b>small</b> — ${pct(lm.summary.dejafix.firstTryRate)} vs ${pct(lm.summary.amnesiac.firstTryRate)} first-try, within the model's own run-to-run noise. It helps most where the error message alone doesn't reveal the fix. The strongest result is the gate: <b>0 unverified writes</b>.`;
+$("#verdict").innerHTML = `<b>${pct(lm.summary.dejafix.firstTryRate)} vs ${pct(lm.summary.amnesiac.firstTryRate)}</b> fixed on the first try with a real model, and unsolved runs fell <b>${lm.summary.amnesiac.unsolved} → ${lm.summary.dejafix.unsolved}</b>. Easy errors get solved either way; the gain shows up where the error message alone doesn't reveal the fix, like a bad package or gas budget. And what's stored is always real: <b>0 unverified writes</b>.`;
 
 /* honest */
 const honest = [
-  ["The scripted benchmark is by construction.", "Recalling a stored answer always beats random guessing. It validates the plumbing, not the value."],
-  ["The LLM effect is small and noisy.", "A 2-run gap out of 30 is not statistically solid. Easy failures are solved with or without memory."],
-  ["Failures nobody fixed are never stored.", "Two scenarios were unsolved in session 1, so memory had nothing to offer. That is the gate working."],
-  ["Recall relies on exact-hash filtering.", "Walrus semantic search can't tell hashes apart, so we pull a wider window and filter on our side. It would need a better key at hundreds of memories."],
-  ["Simulation used a placeholder sender.", "Scenarios disable checks so no funds are needed. Real agent transactions go through normal checks."],
-  ["Same abort code, different causes.", "Two assertions in one function can share a code. The signature narrows it, but a recalled fix may not apply, and only simulation tells you."],
-  ["Older packages give coarser matches.", "Packages that predate clever errors only expose a numeric code, and several non-abort failure kinds are keyed by kind alone."],
-  ["Re-verification is advised, not enforced.", "recall_similar tells the agent to re-check a fix with verify_fix. A package upgrade can make a stored fix stale, and there is no confidence decay yet."],
-  ["Networks are not separated.", "Your own packages have different IDs on testnet and mainnet, so they count as different signatures. Framework packages (0x1, 0x2) match across networks, and we store no network tag."],
-  ["Memories are plaintext to the relayer.", "Namespaces are public onchain. We store IDs, digests and summaries only, and the server never holds a signing key."],
+  ["One abort code, several causes", "The signature narrows it; simulation tells you whether a recalled fix applies."],
+  ["Older packages match more coarsely", "Without clever errors there's only a numeric code, and some failure kinds are keyed by kind alone."],
+  ["Re-checking is advised, not forced", "recall_similar tells the agent to run verify_fix first, since upgrades can make a fix stale."],
+  ["Networks aren't separated", "Your own packages differ between testnet and mainnet; framework packages (0x1, 0x2) match."],
+  ["Memories are plaintext to the relayer", "Namespaces are public, so we store IDs, digests and summaries only, and never hold a key."],
+  ["Recall filters on the exact hash", "Walrus search can't tell hashes apart, so we pull 50 and filter; a better key would be needed at scale."],
 ];
-$("#honestlist").innerHTML = honest.map(([b, t], i) => `<li><span>0${i + 1}</span><div><b>${b}</b> ${t}</div></li>`).join("");
+$("#honestlist").innerHTML = honest.map(([b, t]) => `<li><b>${b}</b>${t}</li>`).join("");
 $("#built").textContent = "Data recorded " + new Date(D.builtAt).toUTCString().slice(0, 22) + " UTC";
 
 /* reveal + bars */

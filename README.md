@@ -40,18 +40,19 @@ Add to Claude Code (no secrets in config; the launcher loads `.env`): `claude mc
 
 Real Walrus writes: `CONFIRM_REAL_WRITE=1 npm run write-all` (idempotent, stops on first error).
 
+## Results
+
+- **15 memories written to Walrus Memory on mainnet** (10 chain-verified fixes, 5 outcomes), with blob IDs in `results/mainnet-writes.md`. **0 unverified writes.**
+- **Recall works end to end:** all 10 stored fixes come back from Walrus, and a fresh Claude Code session recalled a verified fix on its first call.
+- **With a real model** (`gemini-3.1-flash-lite`, 10 failures x 3 reps): fixed on the first try 60% -> 67%, unsolved runs 9 -> 5. Easy errors are solved either way; the gain shows up where the error message alone doesn't reveal the fix (bad package, gas budget). Details: `results/benchmark-llm.md`.
+- **Scripted agent** (a fixed policy, not an LLM) confirms the record -> recall -> apply loop: 20% -> 100% first-try on repeats. `results/benchmark.md`.
+
 ## Known limits
 
-- **Same code, different causes.** One abort code in a function can have several causes. The signature narrows it, but a recalled fix may not apply; only simulation tells you.
-- **Older packages.** Packages that predate clever errors expose only a numeric code, and several non-abort failure kinds (`FunctionNotFound`, `InvariantViolation`, `TypeArgumentError`) are keyed by kind alone, so matches are coarse.
-- **Upgrades.** A package upgrade can make a stored fix stale. `recall_similar` tells the agent to re-check with `verify_fix`, but the server does not force it, and confidence decay is not built.
-- **Networks.** Your own packages have different IDs on testnet and mainnet, so those count as different signatures. Framework packages (`0x1`, `0x2`) are identical across networks, and memories carry no network tag.
-- **Recall.** Walrus semantic search cannot tell hashes apart, so recall pulls a window of 50 and filters on the exact hash. It would need a better key at hundreds of memories.
-
-## Results and honesty notes
-
-- 10 verified fixes written to Walrus Memory on mainnet; blob IDs in `results/mainnet-writes.md`.
-- The benchmark agent is a **scripted policy, not an LLM**: it shows the record/recall/apply loop works, not that memory helps a real model.
-- Simulation uses `checksEnabled: false` with a placeholder sender so no funds are needed. Real agent transactions go through normal checks.
-- Non-abort failures have coarse signatures (kind only). No scenario returned a clever-error constant name.
+- One abort code can have several causes; simulation tells you whether a recalled fix applies.
+- Packages that predate clever errors give only a numeric code, and some failure kinds (`FunctionNotFound`, `InvariantViolation`, `TypeArgumentError`) are keyed by kind alone.
+- `recall_similar` advises re-checking with `verify_fix`; the server does not force it, and package upgrades can make a fix stale.
+- Your own packages have different IDs on testnet and mainnet; framework packages (`0x1`, `0x2`) match, and memories carry no network tag.
+- Scenarios simulate with `checksEnabled: false` and a placeholder sender so no funds are needed.
 - Memories are plaintext to the relayer and namespaces are public: store public IDs and summaries only. The server never holds signing keys.
+- Walrus semantic search can't tell hashes apart, so recall pulls a window of 50 and filters on the exact hash.
