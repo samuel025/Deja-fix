@@ -8,7 +8,9 @@
     "typecheck": "tsc --noEmit",
     "scenarios": "tsx scenarios/run.mts",
     "bench": "tsx bench/run.mts",
-    "write-all": "tsx scenarios/write-all.mts"
+    "write-all": "tsx scenarios/write-all.mts",
+    "recall-check": "tsx scenarios/recall-check.mts",
+    "ledger": "tsx ledger/build.mts"
   },
   "keywords": [],
   "author": "",
