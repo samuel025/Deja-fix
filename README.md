@@ -40,6 +40,18 @@ Add to Claude Code (no secrets in config; the launcher loads `.env`): `claude mc
 
 Real Walrus writes: `CONFIRM_REAL_WRITE=1 npm run write-all` (idempotent, stops on first error).
 
+## Where memory matters
+
+A good model fixes textbook errors from the message alone, and our own test shows it. Memory matters when the message says *what* failed but not *what your project needs*. Each case is labeled by how much evidence we have: **Measured** (in our results, small sample), **Demonstrated** (run end to end once), **Expected** (reasoning, not yet tested).
+
+| Case | Why it matters | Status |
+|---|---|---|
+| The message doesn't reveal the fix | "Package not found" or "gas budget too low" says what broke, not which network, address or budget your project should use. Once a fix is confirmed, the next agent skips the hunt. | **Measured**: the gain sits mostly on gas-budget and bad-package failures (3 reps) |
+| Rules only your project knows | A custom contract's abort codes and package IDs are in no model's training data, and the signature is keyed to the package. | **Expected**: scenarios use framework code, not custom contracts |
+| Across sessions, agents and teammates | An agent starts every session blank. Walrus memory outlives the session, and one account can share memory across up to 20 delegate keys. | **Demonstrated** across sessions; sharing between agents untested |
+| The expensive failures | A verified fix turns a multi-attempt search into one call. | **Measured**: avg attempts 1.70 -> 1.53, unsolved runs 9 -> 5 (of 30) |
+| Compounds without rotting | The gate keeps wrong lessons out, so memory grows without filling with bad advice. | **Expected** long-run; the gate holds today (0 unverified writes) |
+
 ## Results
 
 - **15 memories written to Walrus Memory on mainnet** (10 chain-verified fixes, 5 outcomes), with blob IDs in `results/mainnet-writes.md`. **0 unverified writes.**
