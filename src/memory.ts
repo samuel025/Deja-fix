@@ -17,8 +17,8 @@ export interface StoredMemory {
 export class Memory {
   private m: any;
   readonly mock: boolean;
-  constructor(env = process.env) {
-    this.mock = !env.MEMWAL_PRIVATE_KEY;
+  constructor(env = process.env, forceMock = false) {
+    this.mock = forceMock || !env.MEMWAL_PRIVATE_KEY;
     this.m = this.mock
       ? MemWalMock.create({ namespace: "deja-fix" })
       : MemWal.create({

@@ -6,7 +6,8 @@
     "test": "vitest run",
     "start": "tsx src/server.ts",
     "typecheck": "tsc --noEmit",
-    "scenarios": "tsx scenarios/run.mts"
+    "scenarios": "tsx scenarios/run.mts",
+    "bench": "tsx bench/run.mts"
   },
   "keywords": [],
   "author": "",
