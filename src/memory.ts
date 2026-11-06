@@ -11,6 +11,8 @@ export interface StoredMemory {
   digest?: string;
   verificationId?: string;
   simulation?: "pass";
+  worked?: boolean; // outcome memories: did a reused fix pass re-verification
+  reusedBlobHint?: string;
   at: string;
 }
 

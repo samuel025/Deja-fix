@@ -7,18 +7,23 @@ table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}td,th{bo
 code{font-size:12px;word-break:break-all}.ok{color:var(--ok);font-weight:600}.mut{color:var(--mut)}
 </style></head><body>
 <h1>Déjà Fix memory ledger</h1>
-<p class="mut">Every memory below was written to Walrus Memory only after the server itself simulated the fix and saw it pass. 10 verified fixes.</p>
-<table><tr><th>#</th><th>Scenario</th><th>Fix</th><th>Simulation</th><th>Blob ID</th></tr>
-<tr><td>1</td><td>abort-option-destroy-none</td><td>destroy_some aborts on none; pass option::some(value)</td><td class="ok">pass</td><td><code>Dz0C6uWzEU06i6e5lUTSHz1g7uvX7kwnPHL7Chuggno</code></td></tr>
-<tr><td>2</td><td>abort-vector-borrow-oob</td><td>index out of bounds; check vector::length before borrow</td><td class="ok">pass</td><td><code>m8W11pzY9mfwOTLIfku69tWilfOvk4seecKYXxwgho0</code></td></tr>
-<tr><td>3</td><td>abort-balance-split</td><td>split amount exceeds balance (ENotEnough); split no more than the balance</td><td class="ok">pass</td><td><code>n7_fgKWuXDjOVHFD2UcRt6T9boXI3Lec28QGz9rV3wI</code></td></tr>
-<tr><td>4</td><td>abort-utf8-invalid</td><td>bytes are not valid UTF-8 (EInvalidUTF8)</td><td class="ok">pass</td><td><code>5t_Cd3dRqB8u-EVNtOaoelWoBONzo9rvFKvq5UdAWf4</code></td></tr>
-<tr><td>5</td><td>type-argument-not-found</td><td>type argument names a type that does not exist; use a real type</td><td class="ok">pass</td><td><code>Vg76CmG5juMnWF14npbOw_HdjNdAaG1psu24OuCwULU</code></td></tr>
-<tr><td>6</td><td>insufficient-coin-balance</td><td>splitCoins amount exceeds the coin's balance</td><td class="ok">pass</td><td><code>hmSzyj7ZwVaMJAm7YXamQX68DVdvyxJ9XSiWy14foX4</code></td></tr>
-<tr><td>7</td><td>function-not-found</td><td>the function name is wrong for that module; check the package ABI</td><td class="ok">pass</td><td><code>xyz0R7XFO_OnfJuLcpjl-B2bzPeos7oAAj3OMbCcAhQ</code></td></tr>
-<tr><td>8</td><td>wrong-argument-type</td><td>argument 0 is a u64 but a vector&lt;u64&gt; is required</td><td class="ok">pass</td><td><code>Z1xhSf7_YD8_XqwonKhnCUNRGVAk2nejtXjxcd1DnuA</code></td></tr>
-<tr><td>9</td><td>gas-budget-too-low</td><td>gas budget is below the 100000 minimum; raise the budget</td><td class="ok">pass</td><td><code>8E9NWb0eGG7Bs5rzViTSxY0pgHfhcYFBIoHCsTHD_NE</code></td></tr>
-<tr><td>10</td><td>package-not-found</td><td>the package ID is not on this network; check network and dependency address</td><td class="ok">pass</td><td><code>ZIlGUDaQZJlG0JWvo1uluUwVsvRkQAeQ-kXR-pzoz80</code></td></tr>
+<p class="mut">Every memory below was written to Walrus Memory only after the server itself simulated the fix and saw it pass. 15 memories (10 verified fixes, 5 outcomes).</p>
+<table><tr><th>#</th><th>Type</th><th>Scenario</th><th>Fix</th><th>Simulation</th><th>Blob ID</th></tr>
+<tr><td>1</td><td>verified_fix</td><td>abort-option-destroy-none</td><td>destroy_some aborts on none; pass option::some(value)</td><td class="ok">pass</td><td><code>Dz0C6uWzEU06i6e5lUTSHz1g7uvX7kwnPHL7Chuggno</code></td></tr>
+<tr><td>2</td><td>verified_fix</td><td>abort-vector-borrow-oob</td><td>index out of bounds; check vector::length before borrow</td><td class="ok">pass</td><td><code>m8W11pzY9mfwOTLIfku69tWilfOvk4seecKYXxwgho0</code></td></tr>
+<tr><td>3</td><td>verified_fix</td><td>abort-balance-split</td><td>split amount exceeds balance (ENotEnough); split no more than the balance</td><td class="ok">pass</td><td><code>n7_fgKWuXDjOVHFD2UcRt6T9boXI3Lec28QGz9rV3wI</code></td></tr>
+<tr><td>4</td><td>verified_fix</td><td>abort-utf8-invalid</td><td>bytes are not valid UTF-8 (EInvalidUTF8)</td><td class="ok">pass</td><td><code>5t_Cd3dRqB8u-EVNtOaoelWoBONzo9rvFKvq5UdAWf4</code></td></tr>
+<tr><td>5</td><td>verified_fix</td><td>type-argument-not-found</td><td>type argument names a type that does not exist; use a real type</td><td class="ok">pass</td><td><code>Vg76CmG5juMnWF14npbOw_HdjNdAaG1psu24OuCwULU</code></td></tr>
+<tr><td>6</td><td>verified_fix</td><td>insufficient-coin-balance</td><td>splitCoins amount exceeds the coin's balance</td><td class="ok">pass</td><td><code>hmSzyj7ZwVaMJAm7YXamQX68DVdvyxJ9XSiWy14foX4</code></td></tr>
+<tr><td>7</td><td>verified_fix</td><td>function-not-found</td><td>the function name is wrong for that module; check the package ABI</td><td class="ok">pass</td><td><code>xyz0R7XFO_OnfJuLcpjl-B2bzPeos7oAAj3OMbCcAhQ</code></td></tr>
+<tr><td>8</td><td>verified_fix</td><td>wrong-argument-type</td><td>argument 0 is a u64 but a vector&lt;u64&gt; is required</td><td class="ok">pass</td><td><code>Z1xhSf7_YD8_XqwonKhnCUNRGVAk2nejtXjxcd1DnuA</code></td></tr>
+<tr><td>9</td><td>verified_fix</td><td>gas-budget-too-low</td><td>gas budget is below the 100000 minimum; raise the budget</td><td class="ok">pass</td><td><code>8E9NWb0eGG7Bs5rzViTSxY0pgHfhcYFBIoHCsTHD_NE</code></td></tr>
+<tr><td>10</td><td>verified_fix</td><td>package-not-found</td><td>the package ID is not on this network; check network and dependency address</td><td class="ok">pass</td><td><code>ZIlGUDaQZJlG0JWvo1uluUwVsvRkQAeQ-kXR-pzoz80</code></td></tr>
+<tr><td>11</td><td>outcome</td><td>abort-option-destroy-none</td><td>destroy_some aborts on none; pass option::some(value)</td><td class="ok">pass</td><td><code>idsG1MPX2JxFEX2QzOuLQp8Qvi8sBbmPcrhkh2-Remk</code></td></tr>
+<tr><td>12</td><td>outcome</td><td>abort-vector-borrow-oob</td><td>index out of bounds; check vector::length before borrow</td><td class="ok">pass</td><td><code>eUZfaRA4HMMaKQQ_Aaac-qiOXY3RAZWwW2FZUV6lyPU</code></td></tr>
+<tr><td>13</td><td>outcome</td><td>abort-balance-split</td><td>split amount exceeds balance (ENotEnough); split no more than the balance</td><td class="ok">pass</td><td><code>yRvG8sXTmmNr2YGTg8qXmO8RdqVWhVCUYiFd8tC3ecM</code></td></tr>
+<tr><td>14</td><td>outcome</td><td>abort-utf8-invalid</td><td>bytes are not valid UTF-8 (EInvalidUTF8)</td><td class="ok">pass</td><td><code>Z7ALX1Gro5KgTofZa6BuSvM9dLC8cJ65svANOG9MKz0</code></td></tr>
+<tr><td>15</td><td>outcome</td><td>type-argument-not-found</td><td>type argument names a type that does not exist; use a real type</td><td class="ok">pass</td><td><code>HuNSi385cCefyavW6BkH1IpFIkgFS3oMg7wbVIZYJoo</code></td></tr>
 </table>
 <h2>Benchmark</h2>
 <p class="mut">10 scenarios × 3 reps. Memory: mock (in-memory). Agent: scripted deterministic policy, not an LLM.</p>

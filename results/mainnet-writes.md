@@ -12,3 +12,8 @@
 | 8 | verified_fix | wrong-argument-type | Z1xhSf7_YD8_XqwonKhnCUNRGVAk2nejtXjxcd1DnuA | yes |
 | 9 | verified_fix | gas-budget-too-low | 8E9NWb0eGG7Bs5rzViTSxY0pgHfhcYFBIoHCsTHD_NE | yes |
 | 10 | verified_fix | package-not-found | ZIlGUDaQZJlG0JWvo1uluUwVsvRkQAeQ-kXR-pzoz80 | yes |
+| 11 | outcome | abort-option-destroy-none | idsG1MPX2JxFEX2QzOuLQp8Qvi8sBbmPcrhkh2-Remk | yes |
+| 12 | outcome | abort-vector-borrow-oob | eUZfaRA4HMMaKQQ_Aaac-qiOXY3RAZWwW2FZUV6lyPU | yes |
+| 13 | outcome | abort-balance-split | yRvG8sXTmmNr2YGTg8qXmO8RdqVWhVCUYiFd8tC3ecM | yes |
+| 14 | outcome | abort-utf8-invalid | Z7ALX1Gro5KgTofZa6BuSvM9dLC8cJ65svANOG9MKz0 | yes |
+| 15 | outcome | type-argument-not-found | HuNSi385cCefyavW6BkH1IpFIkgFS3oMg7wbVIZYJoo | yes |

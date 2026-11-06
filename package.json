@@ -12,7 +12,8 @@
     "recall-check": "tsx scenarios/recall-check.mts",
     "ledger": "tsx ledger/build.mts",
     "e2e": "tsx scenarios/e2e-mcp.mts",
-    "demo-bytes": "tsx demo/make-bytes.mts"
+    "demo-bytes": "tsx demo/make-bytes.mts",
+    "write-outcomes": "tsx scenarios/write-outcomes.mts"
   },
   "keywords": [],
   "author": "",

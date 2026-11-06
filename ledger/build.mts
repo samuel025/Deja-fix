@@ -15,9 +15,9 @@ table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}td,th{bo
 code{font-size:12px;word-break:break-all}.ok{color:var(--ok);font-weight:600}.mut{color:var(--mut)}
 </style></head><body>
 <h1>Déjà Fix memory ledger</h1>
-<p class="mut">Every memory below was written to Walrus Memory only after the server itself simulated the fix and saw it pass. ${rows.length} verified fixes.</p>
-<table><tr><th>#</th><th>Scenario</th><th>Fix</th><th>Simulation</th><th>Blob ID</th></tr>
-${rows.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[2])}</td><td>${esc(hint(r[2]))}</td><td class="ok">${r[4] === "yes" ? "pass" : "?"}</td><td><code>${esc(r[3])}</code></td></tr>`).join("\n")}
+<p class="mut">Every memory below was written to Walrus Memory only after the server itself simulated the fix and saw it pass. ${rows.length} memories (${rows.filter((r) => r[1] === "verified_fix").length} verified fixes, ${rows.filter((r) => r[1] === "outcome").length} outcomes).</p>
+<table><tr><th>#</th><th>Type</th><th>Scenario</th><th>Fix</th><th>Simulation</th><th>Blob ID</th></tr>
+${rows.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(hint(r[2]))}</td><td class="ok">${r[4] === "yes" ? "pass" : "?"}</td><td><code>${esc(r[3])}</code></td></tr>`).join("\n")}
 </table>
 <h2>Benchmark</h2>
 <p class="mut">${bench.meta.scenarios} scenarios × ${bench.meta.reps} reps. Memory: ${esc(bench.meta.memory)}. Agent: ${esc(bench.meta.agent)}.</p>
