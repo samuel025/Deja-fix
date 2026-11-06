@@ -35,7 +35,11 @@ server.tool(
   "recall_similar",
   "Recall chain-verified fixes for a failure signature hash from Walrus Memory.",
   { signatureHash: z.string() },
-  async ({ signatureHash: h }) => text({ fixes: await memory.recallFixes(h), mockMemory: memory.mock }),
+  async ({ signatureHash: h }) => text({
+    fixes: await memory.recallFixes(h),
+    mockMemory: memory.mock,
+    note: "Re-check any recalled fix with verify_fix before applying it: package upgrades can make a stored fix stale, and one abort code can have several causes.",
+  }),
 );
 
 server.tool(

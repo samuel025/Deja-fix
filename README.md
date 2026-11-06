@@ -40,6 +40,14 @@ Add to Claude Code (no secrets in config; the launcher loads `.env`): `claude mc
 
 Real Walrus writes: `CONFIRM_REAL_WRITE=1 npm run write-all` (idempotent, stops on first error).
 
+## Known limits
+
+- **Same code, different causes.** One abort code in a function can have several causes. The signature narrows it, but a recalled fix may not apply; only simulation tells you.
+- **Older packages.** Packages that predate clever errors expose only a numeric code, and several non-abort failure kinds (`FunctionNotFound`, `InvariantViolation`, `TypeArgumentError`) are keyed by kind alone, so matches are coarse.
+- **Upgrades.** A package upgrade can make a stored fix stale. `recall_similar` tells the agent to re-check with `verify_fix`, but the server does not force it, and confidence decay is not built.
+- **Networks.** Your own packages have different IDs on testnet and mainnet, so those count as different signatures. Framework packages (`0x1`, `0x2`) are identical across networks, and memories carry no network tag.
+- **Recall.** Walrus semantic search cannot tell hashes apart, so recall pulls a window of 50 and filters on the exact hash. It would need a better key at hundreds of memories.
+
 ## Results and honesty notes
 
 - 10 verified fixes written to Walrus Memory on mainnet; blob IDs in `results/mainnet-writes.md`.

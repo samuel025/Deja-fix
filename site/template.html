@@ -261,7 +261,7 @@ function panel() {
       ? `<h3>Recall: the chain-confirmed fix is already there.</h3><p class="d">A fresh session, no context from before. <span class="mono">recall_similar</span> asks Walrus for verified fixes under this hash.</p><div class="echo-box fade"><p style="font-size:20px;font-weight:300;letter-spacing:-.01em">“${esc(r.fixHint)}”</p><p class="blob" style="margin-top:12px">${r.fixBlob ? "blob " + esc(r.fixBlob) : ""}${r.fixBlob ? `<button class="copy" onclick="copy('${esc(r.fixBlob)}',this)">copy</button>` : ""}</p></div>`
       : `<h3>Recall: nothing yet.</h3><p class="d">First time this failure has been seen. <span class="mono">recall_similar</span> returns zero verified fixes — and gotchas or unverified notes are never returned as fixes.</p><pre>{ "fixes": [] }</pre>`;
     case 3: return s2
-      ? `<h3>Verify: the recalled fix still passes.</h3><p class="d">Even a remembered fix is checked against the chain again before it is trusted.</p><p><span class="tag ok">simulation passed</span><span class="tag amb">via ${esc(r.via)}</span></p>`
+      ? `<h3>Verify: the recalled fix still passes.</h3><p class="d">The server never forces this, but it tells the agent to re-check a recalled fix with <span class="mono">verify_fix</span> before applying it, because fixes can go stale after a package upgrade.</p><p><span class="tag ok">simulation passed</span><span class="tag amb">via ${esc(r.via)}</span></p>`
       : `<h3>Verify: a guess fails, the fix passes.</h3><p class="d">The agent proposes changes; the server simulates each one. A failed simulation can never be remembered.</p>
          <p><span class="tag bad">attempt 1 · failed</span></p><pre style="margin:10px 0 18px">remember_fix(verificationId) → <span style="color:var(--bad)">${esc(r.refusal)}</span></pre>
          <p><span class="tag ok">attempt 2 · passed</span><span class="tag amb">via ${esc(r.via)}</span></p><pre style="margin-top:10px">${esc(r.fixHint)}</pre>`;
@@ -334,6 +334,10 @@ const honest = [
   ["Failures nobody fixed are never stored.", "Two scenarios were unsolved in session 1, so memory had nothing to offer. That is the gate working."],
   ["Recall relies on exact-hash filtering.", "Walrus semantic search can't tell hashes apart, so we pull a wider window and filter on our side. It would need a better key at hundreds of memories."],
   ["Simulation used a placeholder sender.", "Scenarios disable checks so no funds are needed. Real agent transactions go through normal checks."],
+  ["Same abort code, different causes.", "Two assertions in one function can share a code. The signature narrows it, but a recalled fix may not apply, and only simulation tells you."],
+  ["Older packages give coarser matches.", "Packages that predate clever errors only expose a numeric code, and several non-abort failure kinds are keyed by kind alone."],
+  ["Re-verification is advised, not enforced.", "recall_similar tells the agent to re-check a fix with verify_fix. A package upgrade can make a stored fix stale, and there is no confidence decay yet."],
+  ["Networks are not separated.", "Your own packages have different IDs on testnet and mainnet, so they count as different signatures. Framework packages (0x1, 0x2) match across networks, and we store no network tag."],
   ["Memories are plaintext to the relayer.", "Namespaces are public onchain. We store IDs, digests and summaries only, and the server never holds a signing key."],
 ];
 $("#honestlist").innerHTML = honest.map(([b, t], i) => `<li><span>0${i + 1}</span><div><b>${b}</b> ${t}</div></li>`).join("");
