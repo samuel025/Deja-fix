@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Déjà Fix — your agent stops repeating Sui mistakes</title>
+<meta name="description" content="An MCP server that remembers only the Sui transaction fixes the chain confirmed. Built on Tatum and Walrus Memory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070707; --bg2:#0f0f10; --fg:#f4f2ee; --mut:#8d8d93; --line:#232326;
+  --amber:#ffb829; --lilac:#ecd6ff; --violet:#8052ff; --ok:#6ee7a8; --bad:#ff7a6b;
+  --r:2rem;
+}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#f6f4ef; --bg2:#ffffff; --fg:#0b0b0c; --mut:#6b6b72; --line:#dedbd3;
+  --amber:#e69a00; --lilac:#e9d6ff; --violet:#6a3df0; --ok:#0f8a52; --bad:#d4402f;
+}}
+:root[data-theme="light"]{
+  --bg:#f6f4ef; --bg2:#ffffff; --fg:#0b0b0c; --mut:#6b6b72; --line:#dedbd3;
+  --amber:#e69a00; --lilac:#e9d6ff; --violet:#6a3df0; --ok:#0f8a52; --bad:#d4402f;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font:400 17px/1.55 "Inter Tight",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.eyebrow{font:500 12px/1 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.pill{display:inline-flex;align-items:center;gap:.5em;border:1px solid var(--line);border-radius:50px;padding:.7em 1.3em;font-weight:500;font-size:15px;text-decoration:none;background:transparent;color:var(--fg);cursor:pointer;transition:.25s;font-family:inherit}
+.pill:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.pill.solid{background:var(--amber);border-color:var(--amber);color:#111}
+.pill.solid:hover{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.pill[aria-pressed="true"],.pill.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* nav */
+nav{position:fixed;inset:0 0 auto 0;z-index:20;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{font-weight:600;font-size:20px;letter-spacing:-.02em;text-decoration:none;display:flex;align-items:center;gap:.5em}
+.logo i{width:10px;height:10px;border-radius:50%;background:var(--amber);box-shadow:8px 0 0 -2px color-mix(in srgb,var(--amber) 35%,transparent);display:inline-block;margin-right:8px}
+nav ul{display:flex;gap:28px;list-style:none;padding:0}
+nav ul a{text-decoration:none;color:var(--mut);font-size:15px;transition:.2s}nav ul a:hover{color:var(--fg)}
+@media(max-width:760px){nav ul{display:none}}
+
+/* hero */
+header.hero{padding:calc(64px + clamp(48px,10vh,120px)) 0 clamp(48px,8vh,96px);position:relative}
+h1{margin-top:28px;font-weight:200;font-size:clamp(46px,10.5vw,150px);line-height:.95;letter-spacing:-.045em;position:relative;max-width:11ch}
+h1 em{font-style:normal;color:var(--amber);font-weight:300}
+h1 .echo{position:absolute;left:0;top:0;pointer-events:none;color:var(--lilac);opacity:0;white-space:normal;max-width:inherit}
+.echo-a{animation:echo 6s 1.2s infinite ease-in-out}
+.echo-b{animation:echo 6s 1.5s infinite ease-in-out}
+@keyframes echo{0%,55%,100%{opacity:0;transform:none}62%{opacity:.16;transform:translate(.035em,.02em)}78%{opacity:.08;transform:translate(.07em,.04em)}}
+.sub{max-width:52ch;margin-top:clamp(24px,4vh,44px);font-size:clamp(18px,2vw,22px);color:var(--mut);font-weight:300}
+.sub b{color:var(--fg);font-weight:400}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;margin-top:clamp(48px,9vh,96px);border-top:1px solid var(--line)}
+.counters div{padding:24px 24px 24px 0;border-right:1px solid var(--line)}
+.counters div:last-child{border:0}
+.counters strong{display:block;font-weight:200;font-size:clamp(44px,6vw,84px);letter-spacing:-.04em;line-height:1}
+.counters span{color:var(--mut);font-size:14px}
+@media(max-width:700px){.counters div{border-right:0;border-bottom:1px solid var(--line)}}
+
+/* sections */
+section{padding:clamp(72px,14vh,160px) 0;border-top:1px solid var(--line)}
+h2{font-weight:200;font-size:clamp(36px,6.4vw,92px);line-height:1;letter-spacing:-.04em;max-width:16ch}
+h2 em{font-style:normal;color:var(--amber);font-weight:300}
+.lede{color:var(--mut);font-size:clamp(17px,1.6vw,20px);font-weight:300;max-width:56ch;margin-top:24px}
+.lede b{color:var(--fg);font-weight:400}
+
+/* replay */
+.lab{margin-top:56px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.lab-top{display:flex;flex-wrap:wrap;gap:10px;padding:20px;border-bottom:1px solid var(--line);align-items:center}
+.lab-top .sp{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:20px;border-bottom:1px solid var(--line)}
+.chip{font:500 12px "JetBrains Mono",monospace;border:1px solid var(--line);border-radius:50px;padding:.55em 1em;background:transparent;color:var(--mut);cursor:pointer;transition:.2s}
+.chip:hover{color:var(--fg);border-color:var(--mut)}
+.chip.on{background:var(--lilac);color:#15101c;border-color:var(--lilac)}
+.stage{display:grid;grid-template-columns:260px 1fr;min-height:430px}
+@media(max-width:860px){.stage{grid-template-columns:1fr}}
+.rail{border-right:1px solid var(--line);padding:12px 0}
+@media(max-width:860px){.rail{border-right:0;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;padding:8px}}
+.step{display:flex;gap:14px;align-items:center;width:100%;text-align:left;padding:16px 22px;background:none;border:0;color:var(--mut);cursor:pointer;font:400 15px "Inter Tight";transition:.25s;white-space:nowrap}
+.step .n{font:500 12px "JetBrains Mono",monospace;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;flex:none;transition:.25s}
+.step.done{color:var(--fg)}.step.done .n{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.step.cur{color:var(--fg)}.step.cur .n{background:var(--amber);color:#111;border-color:var(--amber);box-shadow:0 0 0 5px color-mix(in srgb,var(--amber) 22%,transparent)}
+.panel{padding:clamp(20px,3vw,40px);position:relative}
+.panel h3{font-weight:300;font-size:clamp(24px,3vw,38px);letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
+.panel p.d{color:var(--mut);font-weight:300;max-width:52ch;margin-bottom:22px}
+.fade{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+pre,.code{font:400 13px/1.65 "JetBrains Mono",monospace;background:var(--bg);border:1px solid var(--line);border-radius:1.1rem;padding:18px 20px;overflow-x:auto;color:var(--fg)}
+.k{color:var(--lilac)}.s{color:var(--amber)}.hl{background:color-mix(in srgb,var(--bad) 22%,transparent);border-radius:4px;padding:0 3px}
+.tag{display:inline-block;font:500 11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;padding:.45em .9em;border-radius:50px;margin-right:6px}
+.tag.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.tag.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.tag.amb{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 22px;font-size:15px;margin:16px 0}
+.kv dt{color:var(--mut)}.kv dd{margin:0;word-break:break-all}
+.echo-box{border:1px dashed var(--lilac);border-radius:1.1rem;padding:18px 20px;margin-top:16px;position:relative}
+.echo-box::before{content:"déjà vu";position:absolute;top:-10px;left:16px;background:var(--bg2);padding:0 8px;font:500 11px "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase;color:var(--lilac)}
+.copy{font:500 11px "JetBrains Mono";border:1px solid var(--line);border-radius:50px;padding:.3em .8em;background:none;color:var(--mut);cursor:pointer;margin-left:8px}
+.copy:hover{color:var(--fg);border-color:var(--fg)}
+
+/* gate cards */
+.gate{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:56px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:28px;transition:.3s}
+.card:hover{transform:translateY(-4px);border-color:var(--mut)}
+.card .eyebrow{display:block;margin-bottom:18px}
+.card h4{font-weight:300;font-size:26px;letter-spacing:-.025em;line-height:1.15;margin-bottom:14px}
+.card .out{margin-top:16px;font:400 13px/1.5 "JetBrains Mono",monospace;color:var(--bad)}
+.card .out.ok{color:var(--ok)}
+
+/* ledger */
+.tbl{margin-top:56px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg2)}
+.tbl .scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{font:500 11px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);text-align:left;padding:16px 20px;border-bottom:1px solid var(--line)}
+td{padding:16px 20px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top}
+tr:last-child td{border:0}
+tr:hover td{background:color-mix(in srgb,var(--fg) 4%,transparent)}
+.blob{font:400 12px "JetBrains Mono",monospace;color:var(--mut);word-break:break-all}
+
+/* proof */
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:56px}
+.bench{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:32px}
+.bench h4{font-weight:300;font-size:26px;letter-spacing:-.025em;margin-bottom:6px}
+.bench .cap{color:var(--mut);font-size:14px;margin-bottom:26px}
+.bar{margin:18px 0}
+.bar .row{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}
+.bar .track{height:14px;background:var(--bg);border-radius:50px;overflow:hidden;border:1px solid var(--line)}
+.bar .fill{height:100%;width:0;border-radius:50px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.fill.a{background:var(--mut)}.fill.b{background:var(--amber)}
+.verdict{margin-top:40px;padding:28px 32px;border-radius:var(--r);background:var(--lilac);color:#15101c;font-size:clamp(18px,2vw,24px);font-weight:300;line-height:1.35;letter-spacing:-.01em}
+.verdict b{font-weight:600}
+
+/* honest */
+.honest{margin-top:48px;display:grid;gap:0;border-top:1px solid var(--line)}
+.honest li{list-style:none;display:grid;grid-template-columns:48px 1fr;gap:12px;padding:22px 0;border-bottom:1px solid var(--line);font-weight:300;font-size:clamp(17px,1.8vw,21px)}
+.honest li span{font:500 12px "JetBrains Mono";color:var(--amber);padding-top:7px}
+.honest b{font-weight:500}
+
+footer{padding:64px 0 48px;border-top:1px solid var(--line)}
+footer .big{font-weight:200;font-size:clamp(40px,9vw,130px);letter-spacing:-.05em;line-height:.95}
+footer .big em{font-style:normal;color:var(--amber)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:48px;color:var(--mut);font-size:14px}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#top"><i></i>Déjà Fix</a>
+  <ul><li><a href="#replay">Replay</a></li><li><a href="#gate">The gate</a></li><li><a href="#ledger">Ledger</a></li><li><a href="#proof">Proof</a></li><li><a href="#honest">Honest notes</a></li></ul>
+  <a class="pill" href="#replay">Watch it remember</a>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <p class="eyebrow">MCP server · Sui · Tatum × Walrus Memory</p>
+  <h1 aria-label="Your agent already made this mistake.">
+    <span>Your agent <em>already</em> made this mistake.</span>
+    <span class="echo echo-a" aria-hidden="true">Your agent already made this mistake.</span>
+    <span class="echo echo-b" aria-hidden="true" style="color:var(--amber)">Your agent already made this mistake.</span>
+  </h1>
+  <p class="sub">Déjà Fix lets a coding agent diagnose a failed Sui transaction and remember <b>only the fixes the chain confirmed</b>. A fix that doesn't pass simulation never reaches memory.</p>
+  <div class="cta"><a class="pill solid" href="#replay">Replay a real failure →</a><a class="pill" href="#ledger">See the Walrus blobs</a></div>
+  <div class="counters" id="counters"></div>
+</div></header>
+
+<section id="replay"><div class="wrap">
+  <p class="eyebrow reveal">01 — Replay</p>
+  <h2 class="reveal">Same failure. <em>Twice.</em></h2>
+  <p class="lede reveal">Pick one of ten real Sui failures. Session 1 is the first time the agent meets it. Session 2 is a fresh chat, a different day — and the answer is already waiting in Walrus. <b>Everything here was recorded from real simulations and real mainnet writes.</b></p>
+  <div class="lab reveal" id="lab"></div>
+</div></section>
+
+<section id="gate"><div class="wrap">
+  <p class="eyebrow reveal">02 — The gate</p>
+  <h2 class="reveal">Nothing is remembered until <em>the chain agrees.</em></h2>
+  <p class="lede reveal">Other agent memories store what the model <i>says</i> worked. Déjà Fix's <span class="mono">remember_fix</span> accepts exactly one thing: a verification ID from a passing simulation the server ran itself.</p>
+  <div class="gate" id="gatecards"></div>
+</div></section>
+
+<section id="ledger"><div class="wrap">
+  <p class="eyebrow reveal">03 — Ledger</p>
+  <h2 class="reveal">Every memory has a <em>receipt.</em></h2>
+  <p class="lede reveal" id="ledgerlede"></p>
+  <div class="tbl reveal"><div class="scroll"><table id="ledgertbl"></table></div></div>
+</div></section>
+
+<section id="proof"><div class="wrap">
+  <p class="eyebrow reveal">04 — Proof</p>
+  <h2 class="reveal">Does memory <em>actually</em> help?</h2>
+  <p class="lede reveal">The plan was fixed in the PRD before we ran anything, and we report the results either way. Each failure appears twice; the bars show the second time.</p>
+  <div class="bars" id="bars"></div>
+  <div class="verdict reveal" id="verdict"></div>
+</div></section>
+
+<section id="honest"><div class="wrap">
+  <p class="eyebrow reveal">05 — Honest notes</p>
+  <h2 class="reveal">What this <em>doesn't</em> prove.</h2>
+  <ul class="honest reveal" id="honestlist"></ul>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="big">Stop making the same<br>Sui mistake <em>twice.</em></div>
+  <div class="foot"><span id="built"></span><span>Built for the Tatum × Walrus “Total Recall” hackathon</span><button class="pill" id="theme">Toggle theme</button></div>
+</div></footer>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (x) => Math.round(x * 100) + "%";
+
+/* counters */
+const counters = [
+  [D.counts.memories, "memories on Walrus mainnet"],
+  [D.counts.fixes, "chain-verified fixes"],
+  [D.counts.unverified, "unverified writes"],
+  [D.counts.scenarios, "real failures reproduced"],
+];
+$("#counters").innerHTML = counters.map(([n, l], i) => `<div><strong data-n="${n}">0</strong><span>${l}</span></div>`).join("");
+function countUp() {
+  document.querySelectorAll("[data-n]").forEach((el) => {
+    const to = +el.dataset.n; const t0 = performance.now();
+    const tick = (t) => { const p = Math.min(1, (t - t0) / 1400); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  });
+}
+countUp();
+
+/* replay lab */
+const STEPS = ["It fails", "Diagnose", "Recall", "Verify", "Remember"];
+let st = { id: D.replay[0].id, session: 1, step: 0, timer: null };
+const cur = () => D.replay.find((r) => r.id === st.id);
+
+function progHtml(p, failIdx) {
+  const lines = JSON.stringify(p, null, 1).split("\n");
+  return lines.join("\n");
+}
+function codeFor(r) {
+  const cmds = r.program.commands.map((c, i) => {
+    const txt = JSON.stringify(c);
+    return (i === r.failure.command ? `<span class="hl">${esc(txt)}</span>` : esc(txt));
+  });
+  return `<pre>${r.program.gasBudget !== undefined ? `gasBudget: <span class="s">${r.program.gasBudget}</span>\n` : ""}${cmds.map((c, i) => `<span style="color:var(--mut)">${i}</span>  ${c}`).join("\n")}</pre>`;
+}
+function copy(text, btn) { navigator.clipboard?.writeText(text); const o = btn.textContent; btn.textContent = "copied"; setTimeout(() => (btn.textContent = o), 1200); }
+
+function panel() {
+  const r = cur(), s2 = st.session === 2;
+  const sig = `<dl class="kv"><dt>kind</dt><dd>${esc(r.failure.kind)}</dd><dt>signature</dt><dd class="mono" style="font-size:13px">${esc(r.signature)}</dd><dt>hash</dt><dd class="mono" style="font-size:13px">${esc(r.hash)}</dd></dl>`;
+  switch (st.step) {
+    case 0: return `<h3>${esc(r.family)}: the transaction fails in simulation.</h3><p class="d">${esc(r.failure.message)}</p>${codeFor(r)}<p style="margin-top:14px"><span class="tag bad">simulation failed</span><span class="tag amb">no gas spent</span></p>`;
+    case 1: return `<h3>${s2 ? "The agent recognises this signature." : "The server turns the failure into a signature."}</h3><p class="d">Package, module, function and abort code are hashed. The hash — never project data — is the lookup key, because Walrus namespaces are public.</p>${sig}`;
+    case 2: return s2
+      ? `<h3>Recall: the chain-confirmed fix is already there.</h3><p class="d">A fresh session, no context from before. <span class="mono">recall_similar</span> asks Walrus for verified fixes under this hash.</p><div class="echo-box fade"><p style="font-size:20px;font-weight:300;letter-spacing:-.01em">“${esc(r.fixHint)}”</p><p class="blob" style="margin-top:12px">${r.fixBlob ? "blob " + esc(r.fixBlob) : ""}${r.fixBlob ? `<button class="copy" onclick="copy('${esc(r.fixBlob)}',this)">copy</button>` : ""}</p></div>`
+      : `<h3>Recall: nothing yet.</h3><p class="d">First time this failure has been seen. <span class="mono">recall_similar</span> returns zero verified fixes — and gotchas or unverified notes are never returned as fixes.</p><pre>{ "fixes": [] }</pre>`;
+    case 3: return s2
+      ? `<h3>Verify: the recalled fix still passes.</h3><p class="d">Even a remembered fix is checked against the chain again before it is trusted.</p><p><span class="tag ok">simulation passed</span><span class="tag amb">via ${esc(r.via)}</span></p>`
+      : `<h3>Verify: a guess fails, the fix passes.</h3><p class="d">The agent proposes changes; the server simulates each one. A failed simulation can never be remembered.</p>
+         <p><span class="tag bad">attempt 1 · failed</span></p><pre style="margin:10px 0 18px">remember_fix(verificationId) → <span style="color:var(--bad)">${esc(r.refusal)}</span></pre>
+         <p><span class="tag ok">attempt 2 · passed</span><span class="tag amb">via ${esc(r.via)}</span></p><pre style="margin-top:10px">${esc(r.fixHint)}</pre>`;
+    case 4: return s2
+      ? `<h3>Remember: the reuse is recorded as an outcome.</h3><p class="d">The fix worked again, so a verified <span class="mono">outcome</span> memory is written — also gated on a passing simulation.</p>${r.outcomeBlob ? `<div class="echo-box"><p class="blob">outcome blob ${esc(r.outcomeBlob)}<button class="copy" onclick="copy('${esc(r.outcomeBlob)}',this)">copy</button></p></div>` : `<p class="d" style="color:var(--amber)">No outcome memory was written for this scenario yet.</p>`}`
+      : `<h3>Remember: written to Walrus, with a receipt.</h3><p class="d">Only now does <span class="mono">remember_fix</span> accept the verification ID and write a typed <span class="mono">verified_fix</span> memory.</p>${r.fixBlob ? `<div class="echo-box"><p class="blob">blob ${esc(r.fixBlob)}<button class="copy" onclick="copy('${esc(r.fixBlob)}',this)">copy</button></p></div>` : ""}`;
+  }
+}
+
+function renderLab() {
+  const r = cur();
+  $("#lab").innerHTML = `
+  <div class="lab-top">
+    <button class="pill ${st.session === 1 ? "on" : ""}" data-s="1">Session 1 · first time</button>
+    <button class="pill ${st.session === 2 ? "on" : ""}" data-s="2">Session 2 · déjà vu</button>
+    <span class="sp"></span>
+    <button class="pill solid" id="play">${st.timer ? "Pause" : "▶ Play"}</button>
+  </div>
+  <div class="chips">${D.replay.map((x) => `<button class="chip ${x.id === st.id ? "on" : ""}" data-id="${x.id}">${x.id}</button>`).join("")}</div>
+  <div class="stage">
+    <div class="rail">${STEPS.map((n, i) => `<button class="step ${i < st.step ? "done" : ""} ${i === st.step ? "cur" : ""}" data-i="${i}"><span class="n">${i + 1}</span>${n}</button>`).join("")}</div>
+    <div class="panel"><div class="fade" id="pn">${panel()}</div></div>
+  </div>`;
+}
+function stop() { clearInterval(st.timer); st.timer = null; }
+function play() {
+  if (st.timer) { stop(); renderLab(); return; }
+  if (st.step >= STEPS.length - 1) st.step = 0;
+  renderLab();
+  st.timer = setInterval(() => { if (st.step >= STEPS.length - 1) { stop(); renderLab(); return; } st.step++; renderLab(); }, 2200);
+  renderLab();
+}
+$("#lab").addEventListener("click", (e) => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.id === "play") return play();
+  if (t.dataset.s) { stop(); st.session = +t.dataset.s; st.step = 0; renderLab(); }
+  else if (t.dataset.id) { stop(); st.id = t.dataset.id; st.step = 0; renderLab(); }
+  else if (t.dataset.i) { stop(); st.step = +t.dataset.i; renderLab(); }
+});
+renderLab();
+
+/* gate cards */
+const r0 = D.replay[0];
+$("#gatecards").innerHTML = [
+  ["A failed simulation", "The agent claims a fix worked, but the simulation said otherwise.", r0.refusal, false],
+  ["An invented ID", "A model hallucinates a verification ID the server never issued.", "Unknown verification ID: the server did not run this simulation.", false],
+  ["A passing simulation", "The server simulated the fix itself and saw it pass.", "stored: true → blob ID returned", true],
+].map(([h, d, o, ok]) => `<div class="card reveal"><span class="eyebrow">remember_fix</span><h4>${h}</h4><p style="color:var(--mut);font-weight:300">${d}</p><p class="out ${ok ? "ok" : ""}">${ok ? "✓ " : "✕ "}${esc(o)}</p></div>`).join("");
+
+/* ledger */
+$("#ledgerlede").innerHTML = `<b>${D.counts.memories} memories</b> written to Walrus Memory on mainnet — ${D.counts.fixes} verified fixes and ${D.counts.outcomes} outcomes. Each row's blob ID is the receipt returned by the relayer.`;
+const fx = Object.fromEntries(D.replay.map((r) => [r.id, r.fixHint]));
+$("#ledgertbl").innerHTML = `<tr><th>#</th><th>Type</th><th>Scenario</th><th>Fix</th><th>Simulation</th><th>Blob ID</th></tr>` + D.writes.map((w) => `<tr><td class="mono">${w.n}</td><td><span class="tag ${w.type === "outcome" ? "amb" : "ok"}" style="margin:0">${esc(w.type.replace("_", " "))}</span></td><td class="mono" style="font-size:13px">${esc(w.scenario)}</td><td>${esc(fx[w.scenario] ?? "")}</td><td><span class="tag ok" style="margin:0">pass</span></td><td class="blob">${esc(w.blob)}</td></tr>`).join("");
+
+/* proof */
+const mk = (title, cap, m, s, a, b) => `<div class="bench reveal"><h4>${title}</h4><p class="cap">${cap}</p>
+  <div class="bar"><div class="row"><span>No memory</span><span>${pct(s.amnesiac[a])} fixed on first try</span></div><div class="track"><div class="fill a" data-w="${s.amnesiac[a] * 100}"></div></div></div>
+  <div class="bar"><div class="row"><span>Déjà Fix</span><span>${pct(s.dejafix[a])} fixed on first try</span></div><div class="track"><div class="fill b" data-w="${s.dejafix[a] * 100}"></div></div></div>
+  <p class="cap" style="margin-top:22px">${b}</p></div>`;
+const sc = D.bench.scripted, lm = D.bench.llm;
+$("#bars").innerHTML =
+  mk("Scripted agent", `${sc.meta.scenarios} failures × ${sc.meta.reps} reps. A fixed policy, not an LLM — it shows the record → recall → apply loop works.`, sc.meta, sc.summary, "secondFirstTryRate", `Avg attempts on the repeat: ${sc.summary.amnesiac.secondAvgAttempts.toFixed(2)} → ${sc.summary.dejafix.secondAvgAttempts.toFixed(2)}`) +
+  mk("Real LLM", `${lm.meta.model} · ${lm.meta.scenarios} failures × ${lm.meta.reps} reps · up to ${lm.meta.maxAttempts} attempts.`, lm.meta, lm.summary, "firstTryRate", `Unsolved: ${lm.summary.amnesiac.unsolved} → ${lm.summary.dejafix.unsolved} of ${lm.meta.scenarios * lm.meta.reps} runs. Avg attempts: ${lm.summary.amnesiac.avgAttempts.toFixed(2)} → ${lm.summary.dejafix.avgAttempts.toFixed(2)}`);
+$("#verdict").innerHTML = `<b>Honest read:</b> with a real model the benefit is <b>small</b> — ${pct(lm.summary.dejafix.firstTryRate)} vs ${pct(lm.summary.amnesiac.firstTryRate)} first-try, within the model's own run-to-run noise. It helps most where the error message alone doesn't reveal the fix. The strongest result is the gate: <b>0 unverified writes</b>.`;
+
+/* honest */
+const honest = [
+  ["The scripted benchmark is by construction.", "Recalling a stored answer always beats random guessing. It validates the plumbing, not the value."],
+  ["The LLM effect is small and noisy.", "A 2-run gap out of 30 is not statistically solid. Easy failures are solved with or without memory."],
+  ["Failures nobody fixed are never stored.", "Two scenarios were unsolved in session 1, so memory had nothing to offer. That is the gate working."],
+  ["Recall relies on exact-hash filtering.", "Walrus semantic search can't tell hashes apart, so we pull a wider window and filter on our side. It would need a better key at hundreds of memories."],
+  ["Simulation used a placeholder sender.", "Scenarios disable checks so no funds are needed. Real agent transactions go through normal checks."],
+  ["Memories are plaintext to the relayer.", "Namespaces are public onchain. We store IDs, digests and summaries only, and the server never holds a signing key."],
+];
+$("#honestlist").innerHTML = honest.map(([b, t], i) => `<li><span>0${i + 1}</span><div><b>${b}</b> ${t}</div></li>`).join("");
+$("#built").textContent = "Data recorded " + new Date(D.builtAt).toUTCString().slice(0, 22) + " UTC";
+
+/* reveal + bars */
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); e.target.querySelectorAll?.(".fill").forEach((f) => (f.style.width = f.dataset.w + "%")); io.unobserve(e.target); } }), { threshold: 0.15 });
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+/* theme */
+$("#theme").onclick = () => { const r = document.documentElement; const dark = getComputedStyle(r).getPropertyValue("--bg").trim() === "#070707"; r.dataset.theme = dark ? "light" : "dark"; };
+</script>
+</body>
+</html>

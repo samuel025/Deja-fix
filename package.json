@@ -15,7 +15,8 @@
     "demo-bytes": "tsx demo/make-bytes.mts",
     "write-outcomes": "tsx scenarios/write-outcomes.mts",
     "bench-llm": "tsx bench/llm.mts",
-    "dsl-check": "tsx scenarios/dsl-check.mts"
+    "dsl-check": "tsx scenarios/dsl-check.mts",
+    "site": "tsx site/build.mts"
   },
   "keywords": [],
   "author": "",

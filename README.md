@@ -35,6 +35,7 @@ Add to Claude Code (no secrets in config; the launcher loads `.env`): `claude mc
 | `npm run bench` | Memory vs no-memory table in `results/benchmark.md` (mock memory, no Walrus writes) |
 | `npm run recall-check` | Read-only: 10/10 stored fixes recalled from Walrus |
 | `npm run e2e` | Full flow over real MCP stdio with mock memory: diagnose, verify, refuse bad/fake IDs, remember, recall |
+| `npm run site` | Rebuilds `site/index.html`, a static one-page site (replay, gate, ledger, benchmarks) from live simulations and the results files |
 | `npm run ledger` | Rebuilds `ledger/index.html` from results |
 
 Real Walrus writes: `CONFIRM_REAL_WRITE=1 npm run write-all` (idempotent, stops on first error).
